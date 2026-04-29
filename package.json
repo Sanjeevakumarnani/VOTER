@@ -35,7 +35,15 @@
   "jest": {
     "testEnvironment": "node",
     "collectCoverageFrom": [
-      "src/**/*.js"
-    ]
+      "src/**/*.js",
+      "public/js/modules/**/*.js"
+    ],
+    "transform": {},
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@google/genai)/)"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
   }
 }
