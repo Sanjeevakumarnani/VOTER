@@ -234,12 +234,12 @@ function initLevelSelector() {
   const levelBtns = document.querySelectorAll('.level-btn');
   const levelSelect = document.getElementById('level-select');
 
-  levelBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
+  levelBtns.forEach((button) => {
+    button.addEventListener('click', () => {
       levelBtns.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
+      button.classList.add('active');
       if (levelSelect) {
-        levelSelect.value = btn.dataset.level;
+        levelSelect.value = button.dataset.level;
       }
     });
   });
@@ -320,7 +320,7 @@ function initExplainer() {
 async function handleExplainerSubmit() {
   const question = document.getElementById('question-input').value.trim();
   const level = document.getElementById('level-select').value;
-  const btn = document.getElementById('ask-btn');
+  const button = document.getElementById('ask-btn');
 
   if (!question || question.length < 3) {
     showToast('Please enter a question (at least 3 characters)');
@@ -343,10 +343,10 @@ async function handleExplainerSubmit() {
     sessionStorage.setItem(cacheKey, JSON.stringify(data));
     renderExplainerResult(data);
     setSRStatus('Answer received');
-  } catch (err) {
-    showToast(err.message || 'Failed to get answer. Please try again.');
+  } catch (error) {
+    showToast(error.message || 'Failed to get answer. Please try again.');
   } finally {
-    setButtonLoading(btn, false);
+    setButtonLoading(button, false);
   }
 }
 
@@ -388,8 +388,8 @@ function renderExplainerResult(data) {
       <div class="followup-chips">
         ${data.follow_up
           .map(
-            (q) =>
-              `<button class="followup-chip" aria-label="Ask: ${escapeHTML(q)}" onclick="prefillQuestion(this)">${escapeHTML(q)}</button>`
+            (followUpQuestion) =>
+              `<button class="followup-chip" aria-label="Ask: ${escapeHTML(followUpQuestion)}" onclick="prefillQuestion(this)">${escapeHTML(followUpQuestion)}</button>`
           )
           .join('')}
       </div>
@@ -403,11 +403,11 @@ function renderExplainerResult(data) {
 /**
  * Pre-fills the question textarea with a follow-up question.
  *
- * @param {HTMLElement} btn - The clicked follow-up chip button
+ * @param {HTMLElement} button - The clicked follow-up chip button
  */
-function prefillQuestion(btn) {
+function prefillQuestion(button) {
   const textarea = document.getElementById('question-input');
-  textarea.value = btn.textContent.trim();
+  textarea.value = button.textContent.trim();
   textarea.dispatchEvent(new Event('input'));
   textarea.scrollIntoView({ behavior: 'smooth' });
   textarea.focus();
@@ -442,7 +442,7 @@ function initTimeline() {
  * await handleLoadTimeline();
  */
 async function handleLoadTimeline() {
-  const btn = document.getElementById('load-timeline-btn');
+  const button = document.getElementById('load-timeline-btn');
   const container = document.getElementById('timeline-container');
   const cacheKey = `${CACHE_PREFIX}timeline`;
   const cached = sessionStorage.getItem(cacheKey);
@@ -461,11 +461,11 @@ async function handleLoadTimeline() {
     sessionStorage.setItem(cacheKey, JSON.stringify(data));
     renderTimeline(data, container);
     setSRStatus('Timeline loaded');
-  } catch (err) {
-    container.innerHTML = `<p style="color:var(--danger);padding:1rem">${escapeHTML(err.message)}</p>`;
+  } catch (error) {
+    container.innerHTML = `<p style="color:var(--danger);padding:1rem">${escapeHTML(error.message)}</p>`;
     showToast('Failed to load timeline. Please try again.');
   } finally {
-    setButtonLoading(btn, false);
+    setButtonLoading(button, false);
   }
 }
 
@@ -535,7 +535,7 @@ function initVotingSteps() {
 async function handleGetVotingSteps() {
   const voterType = document.getElementById('voter-type').value;
   const state = document.getElementById('state-input').value.trim() || 'India';
-  const btn = document.getElementById('get-steps-btn');
+  const button = document.getElementById('get-steps-btn');
   const container = document.getElementById('voting-steps-container');
 
   const cacheKey = `${CACHE_PREFIX}steps_${voterType}_${state.toLowerCase()}`;
@@ -546,7 +546,7 @@ async function handleGetVotingSteps() {
     return;
   }
 
-  setButtonLoading(btn, true);
+  setButtonLoading(button, true);
   setSRStatus('Generating your voting guide...');
   container.innerHTML = renderSkeletons(4);
 
@@ -555,11 +555,11 @@ async function handleGetVotingSteps() {
     sessionStorage.setItem(cacheKey, JSON.stringify(data));
     renderVotingSteps(data, container);
     setSRStatus('Voting guide ready');
-  } catch (err) {
-    container.innerHTML = `<p style="color:var(--danger);padding:1rem">${escapeHTML(err.message)}</p>`;
+  } catch (error) {
+    container.innerHTML = `<p style="color:var(--danger);padding:1rem">${escapeHTML(error.message)}</p>`;
     showToast('Failed to load voting steps. Please try again.');
   } finally {
-    setButtonLoading(btn, false);
+    setButtonLoading(button, false);
   }
 }
 
@@ -650,7 +650,7 @@ function initPollingStations() {
 async function handleFindPollingStations() {
   const addressInput = document.getElementById('polling-address-input');
   const address = addressInput?.value?.trim();
-  const btn = document.getElementById('find-polling-btn');
+  const button = document.getElementById('find-polling-btn');
   const resultsContainer = document.getElementById('polling-results-container');
   const mapIframe = document.getElementById('polling-map-iframe');
   const stationsList = document.getElementById('polling-stations-list');
@@ -687,13 +687,13 @@ async function handleFindPollingStations() {
     }
 
     setSRStatus(`Found ${data.stations?.length || 0} polling stations near ${data.location?.address || address}`);
-  } catch (err) {
-    showToast(err.message || 'Failed to find polling stations. Please try again.');
+  } catch (error) {
+    showToast(error.message || 'Failed to find polling stations. Please try again.');
     if (stationsList) {
       stationsList.innerHTML = `<p class="error-message" role="alert">Unable to find polling stations. Please check your address and try again.</p>`;
     }
   } finally {
-    setButtonLoading(btn, false);
+    setButtonLoading(button, false);
   }
 }
 
@@ -768,11 +768,11 @@ function initQuiz() {
  */
 async function handleStartQuiz() {
   const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-  const btn = document.getElementById('start-quiz-btn');
+  const button = document.getElementById('start-quiz-btn');
   const cacheKey = `${CACHE_PREFIX}quiz_${difficulty}`;
   const cached = sessionStorage.getItem(cacheKey);
 
-  setButtonLoading(btn, true);
+  setButtonLoading(button, true);
   setSRStatus('Loading quiz questions...');
 
   try {
@@ -795,10 +795,10 @@ async function handleStartQuiz() {
 
     renderQuestion();
     setSRStatus('Quiz started');
-  } catch (err) {
+  } catch (error) {
     showToast('Failed to load quiz. Please try again.');
   } finally {
-    setButtonLoading(btn, false);
+    setButtonLoading(button, false);
   }
 }
 
@@ -967,11 +967,11 @@ async function apiFetch(url, method, body) {
     options.body = JSON.stringify(body);
   }
 
-  const res = await fetch(url, options);
-  const data = await res.json();
+  const response = await fetch(url, options);
+  const data = await response.json();
 
-  if (!res.ok) {
-    throw new Error(data.error || `Request failed (${res.status})`);
+  if (!response.ok) {
+    throw new Error(data.error || `Request failed (${response.status})`);
   }
   return data;
 }
@@ -979,14 +979,14 @@ async function apiFetch(url, method, body) {
 /**
  * Toggles loading state on a button.
  *
- * @param {HTMLButtonElement} btn - The button element
+ * @param {HTMLButtonElement} button - The button element
  * @param {boolean} loading - Whether to show loading state
  */
-function setButtonLoading(btn, loading) {
-  const content = btn.querySelector('.btn-content');
-  const spinner = btn.querySelector('.btn-spinner');
-  btn.disabled = loading;
-  btn.setAttribute('aria-busy', loading.toString());
+function setButtonLoading(button, loading) {
+  const content = button.querySelector('.btn-content');
+  const spinner = button.querySelector('.btn-spinner');
+  button.disabled = loading;
+  button.setAttribute('aria-busy', loading.toString());
   if (content) content.hidden = loading;
   if (spinner) spinner.hidden = !loading;
 }
@@ -1013,8 +1013,8 @@ function showToast(message, duration = TOAST_DURATION_MS) {
  * @param {string} message - Status message for assistive technology
  */
 function setSRStatus(message) {
-  const el = document.getElementById('sr-status');
-  if (el) el.textContent = message;
+  const element = document.getElementById('sr-status');
+  if (element) element.textContent = message;
 }
 
 /**
