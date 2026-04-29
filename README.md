@@ -38,15 +38,28 @@
 [![Google Maps](https://img.shields.io/badge/Google-Maps%20API-green)](https://cloud.google.com/maps-platform)
 [![Google Translate](https://img.shields.io/badge/Google-Cloud%20Translate-blueviolet)](https://cloud.google.com/translate)
 
-## 🎯 Challenge Vertical
-**Election Process Education** — Hack2skill Virtual PromptWars Challenge 2
+## 🎯 Challenge Vertical: Election Process Education
+**Hack2skill Virtual PromptWars Challenge 2**
 
-> Create an assistant that helps users understand the election process, timelines, and steps in an interactive and easy-to-follow way.
+### Problem Statement Alignment
+This project directly addresses the **"Election Process Education"** vertical by creating an AI-powered assistant that helps users understand the election process, timelines, and steps in an interactive and easy-to-follow way.
+
+**Core Value Proposition:**
+> *"Learn how Indian elections work — Get instant AI answers, visual timelines, and personalized voting guides"*
+
+**Election Education Features (5 Core):**
+1. **Ask AI** — Answers any election question in plain language
+2. **Election Timeline** — Visual 12-stage election process guide
+3. **Voting Guide** — Personalized step-by-step voting instructions
+4. **Polling Station Finder** — Locate nearby booths using Google Maps
+5. **Election Quiz** — Test knowledge with AI-generated questions
 
 ---
 
 ## 🌟 Problem Statement
-Millions of eligible voters — especially first-time voters — remain confused about how the Indian election process works, what steps to follow, and what their rights are. Existing resources are either too complex or inaccessible. VoteWise AI bridges this gap using conversational AI.
+**The Challenge:** Millions of eligible voters — especially first-time voters — remain confused about how the Indian election process works, what steps to follow, and what their rights are. Existing resources are either too complex or inaccessible.
+
+**Our Solution:** VoteWise AI bridges this gap using conversational AI and interactive education, making election literacy accessible to every Indian voter in their preferred language.
 
 ---
 

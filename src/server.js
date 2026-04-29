@@ -131,8 +131,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  logger.info(`VoteWise AI server running on port ${PORT}`);
-});
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    logger.info(`VoteWise AI server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;

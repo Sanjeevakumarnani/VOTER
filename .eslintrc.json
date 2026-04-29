@@ -1,0 +1,68 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-console": ["warn", { "allow": ["error"] }],
+    "camelcase": ["error", { "properties": "never" }],
+    "eqeqeq": ["error", "always"],
+    "no-magic-numbers": ["warn", {
+      "ignore": [0, 1, -1, 2, 10, 100, 1000],
+      "ignoreArrayIndexes": true,
+      "enforceConst": true,
+      "detectObjects": true
+    }],
+    "require-jsdoc": ["warn", {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": true,
+        "ClassDeclaration": true,
+        "ArrowFunctionExpression": false
+      }
+    }],
+    "valid-jsdoc": ["warn", {
+      "prefer": {
+        "arg": "param",
+        "argument": "param",
+        "returns": "return"
+      },
+      "preferType": {
+        "Boolean": "boolean",
+        "Number": "number",
+        "String": "string",
+        "object": "Object"
+      },
+      "requireReturn": false,
+      "requireReturnType": false,
+      "requireParamDescription": true,
+      "requireReturnDescription": true
+    }],
+    "no-trailing-spaces": "error",
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "semi": ["error", "always"],
+    "comma-dangle": ["error", "es5"],
+    "max-len": ["warn", { "code": 100, "ignoreComments": true, "ignoreStrings": true }],
+    "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1 }],
+    "no-var": "error",
+    "prefer-const": "error"
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.js", "**/*.test.js"],
+      "rules": {
+        "no-undef": "off",
+        "no-magic-numbers": "off"
+      }
+    }
+  ]
+}

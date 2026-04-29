@@ -1,14 +1,19 @@
 /**
  * @fileoverview VoteWise AI Frontend Application
- * @description Single-page application (SPA) frontend for the election education assistant.
- * Handles tab navigation, API communication, quiz logic, UI rendering, and accessibility features.
- * Integrates with Google Gemini API for AI content, Google Maps for polling stations,
- * and provides comprehensive keyboard navigation and screen reader support.
+ * 
+ * Single-page application (SPA) frontend for the election education assistant.
+ * Handles tab navigation, API communication, quiz logic, UI rendering, and 
+ * accessibility features. Integrates with Google Gemini API for AI content, 
+ * Google Maps for polling stations, and provides comprehensive keyboard 
+ * navigation and screen reader support.
+ * 
+ * @module app
  * @author VoteWise AI Team
  * @version 1.0.0
- * @license MIT
- * @copyright 2026 VoteWise AI
- *
+ * @since 2026-04-29
+ * 
+ * @requires constants
+ * 
  * Features:
  * - Tab-based navigation with 5 panels (Ask AI, Timeline, Voting, Polling, Quiz)
  * - Debounced API calls with loading states to prevent spam
@@ -45,6 +50,18 @@ const logger = {
 
 /** Cache prefix for sessionStorage keys */
 const CACHE_PREFIX = 'votewise_';
+
+/** Debounce delay in milliseconds for user input */
+const DEBOUNCE_MS = 300;
+
+/** Toast notification duration in milliseconds */
+const TOAST_DURATION_MS = 3000;
+
+/** Maximum character limit for question input */
+const MAX_QUESTION_LENGTH = 500;
+
+/** Minimum character requirement for address input */
+const MIN_ADDRESS_LENGTH = 3;
 
 /** Debounce timer reference */
 let debounceTimer = null;
@@ -137,6 +154,9 @@ function initTabs() {
 
 /**
  * Initializes the animated gradient background canvas.
+ * Creates floating particle animation with Indian flag colors.
+ *
+ * @returns {void}
  */
 function initBackground() {
   const canvas = document.getElementById('bg-canvas');
@@ -203,7 +223,12 @@ function initBackground() {
 }
 
 /**
- * Initializes the level selector buttons.
+ * Initializes the level selector buttons for knowledge level selection.
+ * Sets up beginner/intermediate/advanced button interactions.
+ *
+ * @returns {void}
+ * @example
+ * initLevelSelector();
  */
 function initLevelSelector() {
   const levelBtns = document.querySelectorAll('.level-btn');
@@ -248,6 +273,11 @@ function initToggleGroups() {
 
 /**
  * Initializes the election question explainer feature.
+ * Sets up event listeners for question input, character counter, and submit button.
+ *
+ * @returns {void}
+ * @example
+ * initExplainer();
  */
 function initExplainer() {
   const textarea = document.getElementById('question-input');
@@ -258,8 +288,8 @@ function initExplainer() {
   /** Update character counter as user types */
   textarea.addEventListener('input', () => {
     const len = textarea.value.length;
-    charCount.textContent = `${len} / 500`;
-    charCount.style.color = len > 450 ? '#F44336' : '';
+    charCount.textContent = `${len} / ${MAX_QUESTION_LENGTH}`;
+    charCount.style.color = len > (MAX_QUESTION_LENGTH * 0.9) ? '#F44336' : '';
   });
 
   /** Quick question chips pre-fill the textarea */
@@ -274,13 +304,18 @@ function initExplainer() {
   /** Submit button with debounce */
   askBtn.addEventListener('click', () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(handleExplainerSubmit, 300);
+    debounceTimer = setTimeout(handleExplainerSubmit, DEBOUNCE_MS);
   });
 }
 
 /**
  * Handles the explainer form submission.
- * Checks cache before calling the API.
+ * Validates input, checks cache, calls API, and renders result.
+ * 
+ * @returns {Promise<void>}
+ * @throws {Error} If API call fails or response is invalid
+ * @example
+ * await handleExplainerSubmit();
  */
 async function handleExplainerSubmit() {
   const question = document.getElementById('question-input').value.trim();
@@ -384,17 +419,27 @@ function prefillQuestion(btn) {
 
 /**
  * Initializes the election timeline loader.
+ * Sets up event listener for timeline load button.
+ * 
+ * @returns {void}
+ * @example
+ * initTimeline();
  */
 function initTimeline() {
   document.getElementById('load-timeline-btn').addEventListener('click', () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(handleLoadTimeline, 300);
+    debounceTimer = setTimeout(handleLoadTimeline, DEBOUNCE_MS);
   });
 }
 
 /**
  * Fetches and renders the election timeline from the API.
- * Result is cached for the session.
+ * Checks cache first, then calls API and stores result in sessionStorage.
+ * 
+ * @returns {Promise<void>}
+ * @throws {Error} If API call fails
+ * @example
+ * await handleLoadTimeline();
  */
 async function handleLoadTimeline() {
   const btn = document.getElementById('load-timeline-btn');
@@ -465,16 +510,27 @@ function renderTimeline(data, container) {
 
 /**
  * Initializes the voting steps guide feature.
+ * Sets up event listener for voting steps button.
+ * 
+ * @returns {void}
+ * @example
+ * initVotingSteps();
  */
 function initVotingSteps() {
   document.getElementById('get-steps-btn').addEventListener('click', () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(handleGetVotingSteps, 300);
+    debounceTimer = setTimeout(handleGetVotingSteps, DEBOUNCE_MS);
   });
 }
 
 /**
  * Fetches and renders personalized voting steps.
+ * Gets voter type and state, checks cache, calls API, renders steps.
+ * 
+ * @returns {Promise<void>}
+ * @throws {Error} If API call fails
+ * @example
+ * await handleGetVotingSteps();
  */
 async function handleGetVotingSteps() {
   const voterType = document.getElementById('voter-type').value;
@@ -555,6 +611,11 @@ function renderVotingSteps(data, container) {
 /**
  * Initializes the polling station finder feature.
  * Uses Google Maps API to locate nearby polling booths.
+ * Sets up click and keyboard event handlers.
+ * 
+ * @returns {void}
+ * @example
+ * initPollingStations();
  */
 function initPollingStations() {
   const findBtn = document.getElementById('find-polling-btn');
@@ -562,7 +623,7 @@ function initPollingStations() {
 
   findBtn.addEventListener('click', () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(handleFindPollingStations, 300);
+    debounceTimer = setTimeout(handleFindPollingStations, DEBOUNCE_MS);
   });
 
   // Allow Enter key to submit
@@ -571,7 +632,7 @@ function initPollingStations() {
     addressInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(handleFindPollingStations, 300);
+        debounceTimer = setTimeout(handleFindPollingStations, DEBOUNCE_MS);
       }
     });
   }
@@ -579,7 +640,12 @@ function initPollingStations() {
 
 /**
  * Fetches and displays polling stations near the entered address.
- * Integrates with Google Maps API via backend proxy.
+ * Validates input, calls API, updates map, and renders station list.
+ * 
+ * @returns {Promise<void>}
+ * @throws {Error} If API call fails or address is invalid
+ * @example
+ * await handleFindPollingStations();
  */
 async function handleFindPollingStations() {
   const addressInput = document.getElementById('polling-address-input');
@@ -589,8 +655,8 @@ async function handleFindPollingStations() {
   const mapIframe = document.getElementById('polling-map-iframe');
   const stationsList = document.getElementById('polling-stations-list');
 
-  if (!address || address.length < 3) {
-    showToast('Please enter a valid address (at least 3 characters)');
+  if (!address || address.length < MIN_ADDRESS_LENGTH) {
+    showToast(`Please enter a valid address (at least ${MIN_ADDRESS_LENGTH} characters)`);
     return;
   }
 
@@ -678,16 +744,27 @@ function renderPollingStations(stations, container) {
 
 /**
  * Initializes the quiz feature.
+ * Sets up event listener for quiz start button.
+ * 
+ * @returns {void}
+ * @example
+ * initQuiz();
  */
 function initQuiz() {
   document.getElementById('start-quiz-btn').addEventListener('click', () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(handleStartQuiz, 300);
+    debounceTimer = setTimeout(handleStartQuiz, DEBOUNCE_MS);
   });
 }
 
 /**
  * Fetches quiz questions and starts the quiz session.
+ * Gets selected difficulty, checks cache, initializes quiz state.
+ * 
+ * @returns {Promise<void>}
+ * @throws {Error} If API call fails
+ * @example
+ * await handleStartQuiz();
  */
 async function handleStartQuiz() {
   const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
@@ -727,6 +804,11 @@ async function handleStartQuiz() {
 
 /**
  * Renders the current quiz question and answer options.
+ * Updates progress bar, displays question with A-D options.
+ * 
+ * @returns {void}
+ * @example
+ * renderQuestion();
  */
 function renderQuestion() {
   const { questions, currentIndex } = quizState;
@@ -735,7 +817,7 @@ function renderQuestion() {
     return;
   }
 
-  const q = questions[currentIndex];
+  const question = questions[currentIndex];
   const total = questions.length;
   const pct = Math.round(((currentIndex) / total) * 100);
 
@@ -745,19 +827,19 @@ function renderQuestion() {
 
   const letters = ['A', 'B', 'C', 'D'];
   document.getElementById('question-display').innerHTML = `
-    <p class="question-text">${escapeHTML(q.question)}</p>
+    <p class="question-text">${escapeHTML(question.question)}</p>
     <ul class="options-list" role="list">
-      ${(q.options || [])
+      ${(question.options || [])
         .map(
-          (opt, i) => `
+          (option, index) => `
         <li>
           <button
             class="option-btn"
-            data-index="${i}"
-            aria-label="Option ${letters[i]}: ${escapeHTML(opt)}"
+            data-index="${index}"
+            aria-label="Option ${letters[index]}: ${escapeHTML(option)}"
           >
-            <span class="option-letter" aria-hidden="true">${letters[i]}</span>
-            ${escapeHTML(opt)}
+            <span class="option-letter" aria-hidden="true">${letters[index]}</span>
+            ${escapeHTML(option)}
           </button>
         </li>
       `
@@ -774,13 +856,13 @@ function renderQuestion() {
 
   quizState.answered = false;
 
-  document.querySelectorAll('.option-btn').forEach((btn) => {
-    btn.addEventListener('click', () => handleOptionSelect(btn, q));
+  document.querySelectorAll('.option-btn').forEach((button) => {
+    button.addEventListener('click', () => handleOptionSelect(button, question));
   });
 
-  const nextBtn = document.getElementById('next-q-btn');
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
+  const nextButton = document.getElementById('next-q-btn');
+  if (nextButton) {
+    nextButton.addEventListener('click', () => {
       quizState.currentIndex++;
       renderQuestion();
     });
@@ -790,23 +872,23 @@ function renderQuestion() {
 /**
  * Handles the user selecting an answer option.
  *
- * @param {HTMLElement} selectedBtn - The clicked option button
+ * @param {HTMLElement} selectedButton - The clicked option button
  * @param {{ answer: number, explanation: string }} question - Current question
  */
-function handleOptionSelect(selectedBtn, question) {
+function handleOptionSelect(selectedButton, question) {
   if (quizState.answered) return;
   quizState.answered = true;
 
-  const selectedIndex = parseInt(selectedBtn.dataset.index, 10);
+  const selectedIndex = parseInt(selectedButton.dataset.index, 10);
   const correct = question.answer;
   const isCorrect = selectedIndex === correct;
 
   if (isCorrect) quizState.score++;
 
-  document.querySelectorAll('.option-btn').forEach((btn, i) => {
-    btn.disabled = true;
-    if (i === correct) btn.classList.add('correct');
-    if (i === selectedIndex && !isCorrect) btn.classList.add('incorrect');
+  document.querySelectorAll('.option-btn').forEach((button, index) => {
+    button.disabled = true;
+    if (index === correct) button.classList.add('correct');
+    if (index === selectedIndex && !isCorrect) button.classList.add('incorrect');
   });
 
   const explanationEl = document.getElementById('answer-explanation');
@@ -819,29 +901,39 @@ function handleOptionSelect(selectedBtn, question) {
 
 /**
  * Renders the final quiz score result screen.
+ * Displays score, percentage, feedback message, and retry button.
+ * 
+ * @returns {void}
+ * @example
+ * renderQuizResult();
  */
 function renderQuizResult() {
   const { score, questions } = quizState;
   const total = questions.length;
-  const pct = Math.round((score / total) * 100);
-  const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
-  const msg = pct >= 80 ? 'Excellent! You know your elections!' : pct >= 60 ? 'Good job! Keep learning.' : 'Keep studying — elections matter!';
+  const percentage = Math.round((score / total) * 100);
+  const emoji = percentage >= 80 ? '🏆' : percentage >= 60 ? '👍' : '📚';
+  const message = percentage >= 80 ? 'Excellent! You know your elections!' : percentage >= 60 ? 'Good job! Keep learning.' : 'Keep studying — elections matter!';
 
   document.getElementById('question-display').hidden = true;
   document.getElementById('quiz-progress-fill').style.width = '100%';
-
-  const resultEl = document.getElementById('quiz-result');
-  resultEl.innerHTML = `
+  
+  const resultElement = document.getElementById('quiz-result');
+  resultElement.innerHTML = `
     <div class="quiz-score" aria-label="Your score: ${score} out of ${total}">${emoji} ${score}/${total}</div>
-    <p class="quiz-score-label">${msg}</p>
+    <p class="quiz-score-label">${message}</p>
     <button class="quiz-retry-btn" onclick="retryQuiz()" aria-label="Try the quiz again">Try Again</button>
   `;
-  resultEl.hidden = false;
+  resultElement.hidden = false;
   setSRStatus(`Quiz complete. You scored ${score} out of ${total}.`);
 }
 
 /**
  * Resets the quiz to the setup screen.
+ * Clears quiz state, hides quiz container, shows setup panel.
+ * 
+ * @returns {void}
+ * @example
+ * retryQuiz();
  */
 function retryQuiz() {
   document.getElementById('quiz-setup').hidden = false;
@@ -905,7 +997,7 @@ function setButtonLoading(btn, loading) {
  * @param {string} message - Message to display
  * @param {number} [duration=3000] - Duration in milliseconds
  */
-function showToast(message, duration = 3000) {
+function showToast(message, duration = TOAST_DURATION_MS) {
   const toast = document.getElementById('toast');
   const messageEl = document.getElementById('toast-message');
   if (toast && messageEl) {
