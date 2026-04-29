@@ -71,3 +71,52 @@ describe('APIError', () => {
     expect(error.userMessage).toBe('Google Maps is temporarily unavailable. Please try again.');
   });
 });
+
+describe('AppError - Complete Coverage', () => {
+  test('default userMessage when not provided', () => {
+    const error = new AppError('tech msg', 'CODE');
+    expect(error.userMessage).toBe('Something went wrong. Please try again.');
+  });
+
+  test('timestamp is valid ISO string', () => {
+    const error = new AppError('msg', 'CODE');
+    expect(new Date(error.timestamp).toISOString()).toBe(error.timestamp);
+  });
+
+  test('ValidationError statusCode is always 400', () => {
+    const error = new ValidationError('bad input', 'email');
+    expect(error.statusCode).toBe(400);
+    expect(error.name).toBe('ValidationError');
+  });
+
+  test('APIError statusCode is always 502', () => {
+    const error = new APIError('api fail', 'Gemini');
+    expect(error.statusCode).toBe(502);
+    expect(error.service).toBe('Gemini');
+  });
+
+  test('AppError is instanceof Error', () => {
+    const error = new AppError('msg', 'CODE');
+    expect(error instanceof Error).toBe(true);
+  });
+
+  test('ValidationError is instanceof AppError', () => {
+    const error = new ValidationError('msg', 'field');
+    expect(error instanceof AppError).toBe(true);
+  });
+
+  test('ValidationError is instanceof Error', () => {
+    const error = new ValidationError('msg', 'field');
+    expect(error instanceof Error).toBe(true);
+  });
+
+  test('APIError is instanceof AppError', () => {
+    const error = new APIError('msg', 'service');
+    expect(error instanceof AppError).toBe(true);
+  });
+
+  test('APIError is instanceof Error', () => {
+    const error = new APIError('msg', 'service');
+    expect(error instanceof Error).toBe(true);
+  });
+});

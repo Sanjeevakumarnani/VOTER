@@ -64,12 +64,12 @@
         </span>
         <span class="logo-text">VoteWise <span class="logo-accent">AI</span></span>
       </div>
-      <nav class="header-nav" role="navigation" aria-label="Main navigation">
-        <button class="nav-link active" id="tab-btn-explainer" data-tab="explainer" aria-selected="true" aria-controls="panel-explainer"><i class="fas fa-sparkles" aria-hidden="true"></i> Ask AI</button>
-        <button class="nav-link" id="tab-btn-timeline" data-tab="timeline" aria-selected="false" aria-controls="panel-timeline"><i class="fas fa-timeline" aria-hidden="true"></i> Timeline</button>
-        <button class="nav-link" id="tab-btn-voting" data-tab="voting" aria-selected="false" aria-controls="panel-voting"><i class="fas fa-check-to-slot" aria-hidden="true"></i> How to Vote</button>
-        <button class="nav-link" id="tab-btn-polling" data-tab="polling" aria-selected="false" aria-controls="panel-polling"><i class="fas fa-location-dot" aria-hidden="true"></i> Find Polling Station</button>
-        <button class="nav-link" id="tab-btn-quiz" data-tab="quiz" aria-selected="false" aria-controls="panel-quiz"><i class="fas fa-brain" aria-hidden="true"></i> Quiz</button>
+      <nav class="header-nav" role="tablist" aria-label="VoteWise AI Features">
+        <button class="nav-link active" id="tab-btn-explainer" data-tab="explainer" role="tab" aria-selected="true" aria-controls="panel-explainer" tabindex="0"><i class="fas fa-sparkles" aria-hidden="true"></i> Ask AI</button>
+        <button class="nav-link" id="tab-btn-timeline" data-tab="timeline" role="tab" aria-selected="false" aria-controls="panel-timeline" tabindex="-1"><i class="fas fa-timeline" aria-hidden="true"></i> Timeline</button>
+        <button class="nav-link" id="tab-btn-voting" data-tab="voting" role="tab" aria-selected="false" aria-controls="panel-voting" tabindex="-1"><i class="fas fa-check-to-slot" aria-hidden="true"></i> How to Vote</button>
+        <button class="nav-link" id="tab-btn-polling" data-tab="polling" role="tab" aria-selected="false" aria-controls="panel-polling" tabindex="-1"><i class="fas fa-location-dot" aria-hidden="true"></i> Find Polling Station</button>
+        <button class="nav-link" id="tab-btn-quiz" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" tabindex="-1"><i class="fas fa-brain" aria-hidden="true"></i> Quiz</button>
       </nav>
     </div>
   </header>
@@ -90,6 +90,7 @@
 
   <main id="main-content" class="main-content" role="main">
     <div aria-live="polite" aria-atomic="true" id="sr-status" class="sr-only"></div>
+    <div role="alert" aria-live="assertive" id="error-alert" class="error-alert" hidden></div>
 
     <!-- ===== PANEL 1: ASK AI ===== -->
     <section id="panel-explainer" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-explainer">
@@ -101,7 +102,8 @@
 
       <div class="glass-card explainer-form">
         <div class="input-group floating">
-          <textarea id="question-input" class="glass-input" placeholder=" " maxlength="500" rows="3"></textarea>
+          <textarea id="question-input" class="glass-input" placeholder=" " maxlength="500" rows="3" aria-describedby="question-help"></textarea>
+          <span id="question-help" class="sr-only">Enter your election question here. Maximum 500 characters.</span>
           <label for="question-input" class="floating-label"><i class="fas fa-message"></i> Ask your question</label>
           <span class="char-count" id="char-count">0 / 500</span>
         </div>

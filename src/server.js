@@ -100,6 +100,29 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 /**
+ * Prevent parameter pollution - flatten arrays in req.body
+ */
+app.use((req, res, next) => {
+  if (req.body && typeof req.body === 'object') {
+    Object.keys(req.body).forEach((key) => {
+      if (Array.isArray(req.body[key])) {
+        req.body[key] = req.body[key][0];
+      }
+    });
+  }
+  next();
+});
+
+/**
+ * Additional security response headers
+ */
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  next();
+});
+
+/**
  * Serve static frontend files with proper MIME types for ES6 modules
  */
 app.use(express.static(path.join(__dirname, '..', 'public'), {
